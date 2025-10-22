@@ -9,6 +9,8 @@ import (
 var (
 	Min = 1
 	Max = 100
+	Start time.Time
+	Stop  time.Time
 )
 
 func ChangeRangeSettings(min, max int) {
@@ -23,20 +25,20 @@ func GenerateRandomNumber(min, max int) int {
 
 func CheckGuess(guess, target int) (string, bool) {
 	if guess < target {
-		if target - guess < int((0.01) * (float32(Max-Min))) {
+		if target - guess < int((0.01) * (float32(Max-Min+1))) {
 			return HotStyle.Render(fmt.Sprintf("%d is close enough!", guess)), false
-		} else if target - guess >= int((0.01) * (float32(Max-Min))) && target - guess < int((0.05) * (float32(Max-Min))) {
+		} else if target - guess >= int((0.01) * (float32(Max-Min+1))) && target - guess < int((0.05) * (float32(Max-Min+1))) {
 			return HotStyle.Render(fmt.Sprintf("Close! %d is slightly lower!", guess)), false
-		} else if target - guess >= int((0.1) * (float32(Max-Min))) {
+		} else if target - guess >= int((0.1) * (float32(Max-Min+1))) {
 			return ColdStyle.Render(fmt.Sprintf("Way off! %d is too low!", guess)), false
 		}
 		// return fmt.Sprintf("Incorrect! %d is too low!", guess), false
 	} else if guess > target {
-		if guess - target < int((0.01) * (float32(Max-Min))) {
+		if guess - target < int((0.01) * (float32(Max-Min+1))) {
 			return HotStyle.Render(fmt.Sprintf("%d is close enough!", guess)), false
-		} else if guess - target >= int((0.01) * (float32(Max-Min))) && guess - target < int((0.05) * (float32(Max-Min))) {
+		} else if guess - target >= int((0.01) * (float32(Max-Min+1))) && guess - target < int((0.05) * (float32(Max-Min+1))) {
 			return HotStyle.Render(fmt.Sprintf("Close! %d is slightly higher!", guess)), false
-		} else if guess - target >= int((0.05) * (float32(Max-Min))) {
+		} else if guess - target >= int((0.05) * (float32(Max-Min+1))) {
 			return ColdStyle.Render(fmt.Sprintf("Way off! %d is too high!", guess)), false
 		}
 		// return fmt.Sprintf("Incorrect! %d is too high!", guess), false
@@ -47,7 +49,18 @@ func CheckGuess(guess, target int) (string, bool) {
 	return "", false
 }
 
+func startTimer() {
+	Start = time.Now()
+}
+
+func stopTimer() {
+	Stop = time.Now()
+	elapsed := Stop.Sub(Start)
+	fmt.Println(gameStyle.Render(fmt.Sprintf("\nTime taken: %s\n", elapsed.Round(time.Second))))
+}
+
 func GameLoop() {
+	startTimer()
 	for ;Chances > 0; Chances-- {
 		// fmt.Printf("You have %d chances left. Enter your guess: ", Chances)
 		var guess int
@@ -57,14 +70,16 @@ func GameLoop() {
 			continue
 		}
 
-		result, ok := CheckGuess(guess, TargetNumber)
 		Attempts++
+		result, ok := CheckGuess(guess, TargetNumber)
 		fmt.Println(result)
 
 		if ok {
 			// fmt.Println("Congratulations! You've guessed the number!")
+			stopTimer()
 			return
 		}
 	}
-	fmt.Println(FailStyle.Render(fmt.Sprintf("😔 Sorry, you've run out of chances. The correct number was %d.\n", TargetNumber)))
+	fmt.Println(FailStyle.Render(fmt.Sprintf("\n😔 Sorry, you've run out of chances. The correct number was %d.\n", TargetNumber)))
+	stopTimer()
 }
