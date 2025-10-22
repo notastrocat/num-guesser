@@ -23,16 +23,20 @@ func GenerateRandomNumber(min, max int) int {
 
 func CheckGuess(guess, target int) (string, bool) {
 	if guess < target {
-		if target - guess < 10 {
+		if target - guess < int((0.01) * (float32(Max-Min))) {
+			return HotStyle.Render(fmt.Sprintf("%d is close enough!", guess)), false
+		} else if target - guess >= int((0.01) * (float32(Max-Min))) && target - guess < int((0.05) * (float32(Max-Min))) {
 			return HotStyle.Render(fmt.Sprintf("Close! %d is slightly lower!", guess)), false
-		} else if target - guess >= 10 {
+		} else if target - guess >= int((0.1) * (float32(Max-Min))) {
 			return ColdStyle.Render(fmt.Sprintf("Way off! %d is too low!", guess)), false
 		}
 		// return fmt.Sprintf("Incorrect! %d is too low!", guess), false
 	} else if guess > target {
-		if guess - target < 10 {
+		if guess - target < int((0.01) * (float32(Max-Min))) {
+			return HotStyle.Render(fmt.Sprintf("%d is close enough!", guess)), false
+		} else if guess - target >= int((0.01) * (float32(Max-Min))) && guess - target < int((0.05) * (float32(Max-Min))) {
 			return HotStyle.Render(fmt.Sprintf("Close! %d is slightly higher!", guess)), false
-		} else if guess - target >= 10 {
+		} else if guess - target >= int((0.05) * (float32(Max-Min))) {
 			return ColdStyle.Render(fmt.Sprintf("Way off! %d is too high!", guess)), false
 		}
 		// return fmt.Sprintf("Incorrect! %d is too high!", guess), false

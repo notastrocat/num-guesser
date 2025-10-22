@@ -59,9 +59,9 @@ func main() {
 
 	for ;choice < 1 || choice > 3; {
 		fmt.Println(gameStyle.Bold(true).Render("\nSelect difficulty level: -"))
-		fmt.Println(gameStyle.Render("1. Easy (10 chances)"))
-		fmt.Println(gameStyle.Render("2. Medium (5 chances)"))
-		fmt.Println(gameStyle.Render("3. Hard (3 chances)"))
+		fmt.Println(gameStyle.Render("1. Easy (2% of the range + 10 chances)"))
+		fmt.Println(gameStyle.Render("2. Medium (2% of the range + 5 chances)"))
+		fmt.Println(gameStyle.Render("3. Hard (2% of the range + 3 chances)"))
 
 		fmt.Print(gameStyle.Underline(true).Render("\nEnter your choice (1-3): "))
 
@@ -84,14 +84,16 @@ func main() {
 }
 
 func getChances(choice int) int {
-	switch choice {
+	y := 0.02 * float32(Max - Min - 99)
+
+	switch choice{
 	case 1:
-		return 10
+		return int(y + float32(10))   // Easy
 	case 2:
-		return 5
+		return int(y/2 + float32(5))  // Medium
 	case 3:
-		return 3
+		return int(y/3 + float32(3))  // Hard
 	default:
-		return 0
+		return 10
 	}
 }
